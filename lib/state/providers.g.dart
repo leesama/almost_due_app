@@ -50,6 +50,54 @@ final class StorageServiceProvider
 
 String _$storageServiceHash() => r'a6d23bc030486b6d1106efa40d3a7733b6bf906f';
 
+@ProviderFor(notificationService)
+const notificationServiceProvider = NotificationServiceProvider._();
+
+final class NotificationServiceProvider
+    extends
+        $FunctionalProvider<
+          NotificationService,
+          NotificationService,
+          NotificationService
+        >
+    with $Provider<NotificationService> {
+  const NotificationServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'notificationServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$notificationServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<NotificationService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  NotificationService create(Ref ref) {
+    return notificationService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(NotificationService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<NotificationService>(value),
+    );
+  }
+}
+
+String _$notificationServiceHash() =>
+    r'cda5ea9d196dce85bee56839a4a0f035021752e3';
+
 @ProviderFor(AppState)
 const appStateProvider = AppStateProvider._();
 
@@ -81,7 +129,7 @@ final class AppStateProvider extends $NotifierProvider<AppState, AppStateData> {
   }
 }
 
-String _$appStateHash() => r'ac63cda1da09441b058161338c54263a89124657';
+String _$appStateHash() => r'dfe99a55b2f5884738096ad3528f5991b459168f';
 
 abstract class _$AppState extends $Notifier<AppStateData> {
   AppStateData build();
