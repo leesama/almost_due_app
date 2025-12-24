@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build_runner watch",
+      "type": "shell",
+      "command": "flutter pub run build_runner watch --delete-conflicting-outputs",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "owner": "dart",
+          "pattern": [
+            {
+              "regexp": "^(.*):(\\d+):(\\d+):\\s+(error|warning|info):\\s+(.*)$",
+              "file": 1,
+              "line": 2,
+              "column": 3,
+              "severity": 4,
+              "message": 5
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Building",
+            "endsPattern": "Succeeded|Failed"
+          }
+        }
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}
