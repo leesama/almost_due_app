@@ -108,19 +108,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _openAddItem(BuildContext context, AddMode mode) async {
-    final l10n = AppLocalizations.of(context)!;
-    final saved = await context.push<bool>(
+    await context.push(
       AppRoutes.addItem,
       extra: AddItemArgs(mode: mode),
     );
-    if (!context.mounted) {
-      return;
-    }
-    if (saved == true) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.itemSavedSnack)));
-    }
   }
 
   List<ExpiryItem> _filteredItems(

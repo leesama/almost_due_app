@@ -43,6 +43,7 @@ dependencies:
   riverpod_annotation: ^3.0.3
   shared_preferences: ^2.5.3
   flutter_local_notifications: ^19.2.1
+  flutter_smart_dialog: ^4.9.6
   timezone: ^0.10.1
 
 dev_dependencies:

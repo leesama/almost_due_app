@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:almost_due_app/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 import '../../app/theme.dart';
 import '../../data/models/expiry_item.dart';
@@ -172,7 +172,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     final l10n = AppLocalizations.of(context)!;
     final settings = ref.read(appStateProvider).settings;
     if (!settings.isAiConfigured) {
-      _showSnack(l10n.aiNotConfiguredMessage);
+      _showToast(l10n.aiNotConfiguredMessage);
       return;
     }
 
@@ -206,7 +206,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     });
 
     if (result.message != null) {
-      _showSnack(result.message!);
+      _showToast(result.message!);
     }
   }
 
@@ -214,11 +214,11 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     final l10n = AppLocalizations.of(context)!;
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      _showSnack(l10n.addItemNameRequired);
+      _showToast(l10n.addItemNameRequired);
       return;
     }
     if (_selectedDate == null) {
-      _showSnack(l10n.addItemDateRequired);
+      _showToast(l10n.addItemDateRequired);
       return;
     }
 
@@ -235,12 +235,16 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       return;
     }
 
-    context.pop(true);
+    _showToast(l10n.itemSavedSnack);
+    setState(() {
+      _nameController.clear();
+      _notesController.clear();
+      _aiTextController.clear();
+      _selectedDate = null;
+    });
   }
 
-  void _showSnack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+  void _showToast(String message) {
+    SmartDialog.showToast(message);
   }
 }

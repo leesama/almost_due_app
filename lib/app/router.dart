@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 import '../ui/screens/add_item_screen.dart';
 import '../ui/screens/add_item_types.dart';
@@ -19,6 +20,7 @@ class AppRoutes {
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.home,
+    observers: [FlutterSmartDialog.observer],
     routes: [
       GoRoute(
         path: AppRoutes.home,
@@ -29,9 +31,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) {
           final args = state.extra as AddItemArgs?;
           return MaterialPage<void>(
-            child: AddItemScreen(
-              initialMode: args?.mode ?? AddMode.manual,
-            ),
+            child: AddItemScreen(initialMode: args?.mode ?? AddMode.manual),
           );
         },
       ),

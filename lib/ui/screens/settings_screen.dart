@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:almost_due_app/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 import '../../app/theme.dart';
 import '../../state/providers.dart';
@@ -195,9 +196,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       return;
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.settingsSavedSnack)));
+    SmartDialog.showToast(l10n.settingsSavedSnack);
   }
 
   Widget _buildReminderTimePicker(AppLocalizations l10n) {

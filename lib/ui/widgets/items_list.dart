@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:almost_due_app/l10n/app_localizations.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 import '../../app/theme.dart';
 import '../../data/models/expiry_item.dart';
@@ -44,9 +45,7 @@ class ItemsList extends StatelessWidget {
           ),
           onDismissed: (_) {
             onRemove(item);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(l10n.deleteItemSnack)));
+            SmartDialog.showToast(l10n.deleteItemSnack);
           },
           child: ExpiryItemCard(item: item, reminderDays: reminderDays),
         );
