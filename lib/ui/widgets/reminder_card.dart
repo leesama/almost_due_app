@@ -35,9 +35,16 @@ class ReminderCounts {
 }
 
 class ReminderCard extends StatelessWidget {
-  const ReminderCard({super.key, required this.counts});
+  const ReminderCard({
+    super.key,
+    required this.counts,
+    required this.onExpiredTap,
+    required this.onDueSoonTap,
+  });
 
   final ReminderCounts counts;
+  final VoidCallback onExpiredTap;
+  final VoidCallback onDueSoonTap;
 
   @override
   Widget build(BuildContext context) {
@@ -55,53 +62,97 @@ class ReminderCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            height: 52,
-            width: 52,
-            decoration: BoxDecoration(
-              color: AppColors.secondary.withValues(alpha: 0.35),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(Icons.notifications_active_rounded),
+          _ReminderActionTile(
+            title: l10n.reminderExpiredTitle,
+            subtitle: l10n.reminderExpiredCount(counts.expired),
+            accentColor: AppColors.danger,
+            icon: Icons.error_outline_rounded,
+            onTap: onExpiredTap,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.reminderTitle,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.reminderSummary(
-                    counts.expired,
-                    counts.dueSoon,
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.ink.withValues(alpha: 0.7),
-                      ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.sunshine.withValues(alpha: 0.35),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              l10n.reminderTotal(counts.total),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
+          const SizedBox(height: 10),
+          _ReminderActionTile(
+            title: l10n.reminderDueSoonTitle,
+            subtitle: l10n.reminderDueSoonCount(counts.dueSoon),
+            accentColor: AppColors.warning,
+            icon: Icons.schedule_rounded,
+            onTap: onDueSoonTap,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ReminderActionTile extends StatelessWidget {
+  const _ReminderActionTile({
+    required this.title,
+    required this.subtitle,
+    required this.accentColor,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final Color accentColor;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: accentColor.withValues(alpha: 0.16),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: accentColor.withValues(alpha: 0.4)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(icon, color: accentColor),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.ink.withValues(alpha: 0.7),
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.ink.withValues(alpha: 0.5),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

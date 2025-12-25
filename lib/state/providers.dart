@@ -34,7 +34,7 @@ class AppState extends _$AppState {
 
     // 加载完成后，重新调度所有通知
     final notification = ref.read(notificationServiceProvider);
-    await notification.rescheduleAll(items, settings.reminderDays);
+    await notification.rescheduleAll(items, settings);
   }
 
   Future<void> addItem(ExpiryItem item) async {
@@ -46,10 +46,7 @@ class AppState extends _$AppState {
     await storage.saveItems(updated);
 
     // 为新物品调度通知
-    await notification.scheduleExpiryNotification(
-      item,
-      state.settings.reminderDays,
-    );
+    await notification.scheduleExpiryNotification(item, state.settings);
   }
 
   Future<void> removeItem(String id) async {
@@ -66,15 +63,12 @@ class AppState extends _$AppState {
 
   Future<void> updateSettings(AppSettings settings) async {
     final storage = ref.read(storageServiceProvider);
-    final oldReminderDays = state.settings.reminderDays;
 
     state = state.copyWith(settings: settings);
     await storage.saveSettings(settings);
 
-    // 如果提醒天数变化，重新调度所有通知
-    if (settings.reminderDays != oldReminderDays) {
-      final notification = ref.read(notificationServiceProvider);
-      await notification.rescheduleAll(state.items, settings.reminderDays);
-    }
+    // 保存设置后，确保所有已有物品的提醒时间同步更新
+    final notification = ref.read(notificationServiceProvider);
+    await notification.rescheduleAll(state.items, settings);
   }
 }

@@ -5,11 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../ui/screens/add_item_screen.dart';
 import '../ui/screens/add_item_types.dart';
 import '../ui/screens/home_screen.dart';
+import '../ui/screens/reminder_items_screen.dart';
+import '../ui/screens/reminder_items_types.dart';
 import '../ui/screens/settings_screen.dart';
 
 class AppRoutes {
   static const home = '/';
   static const addItem = '/add';
+  static const reminders = '/reminders';
   static const settings = '/settings';
 }
 
@@ -35,6 +38,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.settings,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.reminders}/:filter',
+        builder: (context, state) {
+          final name = state.pathParameters['filter'];
+          final filter = name == ReminderFilter.dueSoon.name
+              ? ReminderFilter.dueSoon
+              : ReminderFilter.expired;
+          return ReminderItemsScreen(filter: filter);
+        },
       ),
     ],
   );

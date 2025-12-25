@@ -1,3 +1,4 @@
+import 'package:almost_due_app/state/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:almost_due_app/l10n/app_localizations.dart';
@@ -29,13 +30,7 @@ class HomeHeader extends ConsumerWidget {
                   context,
                 ).textTheme.titleLarge?.copyWith(fontSize: 26),
               ),
-              const SizedBox(height: 6),
-              Text(
-                l10n.appTagline,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.ink.withValues(alpha: 0.6),
-                ),
-              ),
+
               const SizedBox(height: 6),
               Text(
                 l10n.totalItems(totalItems),
@@ -46,19 +41,19 @@ class HomeHeader extends ConsumerWidget {
             ],
           ),
         ),
-        // IconButton(
-        //   onPressed: () async {
-        //     await ref.read(notificationServiceProvider).showTestNotification();
-        //   },
-        //   icon: const Icon(Icons.notifications_active_rounded),
-        //   style: IconButton.styleFrom(
-        //     backgroundColor: Colors.white,
-        //     shape: RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(16),
-        //     ),
-        //   ),
-        // ),
-        // const SizedBox(width: 8),
+        IconButton(
+          onPressed: () async {
+            await ref.read(notificationServiceProvider).showTestNotification();
+          },
+          icon: const Icon(Icons.notifications_active_rounded),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
         IconButton(
           onPressed: onSettings,
           icon: const Icon(Icons.settings_rounded),

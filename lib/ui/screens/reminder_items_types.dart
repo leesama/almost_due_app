@@ -1,0 +1,1 @@
+enum ReminderFilter { expired, dueSoon }

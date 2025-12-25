@@ -104,12 +104,6 @@ abstract class AppLocalizations {
   /// **'快到期啦'**
   String get appTitle;
 
-  /// No description provided for @appTagline.
-  ///
-  /// In zh, this message translates to:
-  /// **'可爱提醒你的物品到期'**
-  String get appTagline;
-
   /// No description provided for @totalItems.
   ///
   /// In zh, this message translates to:
@@ -121,6 +115,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'物品列表'**
   String get itemsListTitle;
+
+  /// No description provided for @homeTabExpired.
+  ///
+  /// In zh, this message translates to:
+  /// **'已到期商品'**
+  String get homeTabExpired;
+
+  /// No description provided for @homeTabDueSoon.
+  ///
+  /// In zh, this message translates to:
+  /// **'快到期商品'**
+  String get homeTabDueSoon;
+
+  /// No description provided for @homeTabAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'所有商品'**
+  String get homeTabAll;
 
   /// No description provided for @addItemFab.
   ///
@@ -284,6 +296,30 @@ abstract class AppLocalizations {
   /// **'共 {count} 件'**
   String reminderTotal(int count);
 
+  /// No description provided for @reminderExpiredTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'已到期提醒'**
+  String get reminderExpiredTitle;
+
+  /// No description provided for @reminderExpiredCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'已到期 {count} 件'**
+  String reminderExpiredCount(int count);
+
+  /// No description provided for @reminderDueSoonTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'快到期提醒'**
+  String get reminderDueSoonTitle;
+
+  /// No description provided for @reminderDueSoonCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'快到期 {count} 件'**
+  String reminderDueSoonCount(int count);
+
   /// No description provided for @settingsTitle.
   ///
   /// In zh, this message translates to:
@@ -341,8 +377,32 @@ abstract class AppLocalizations {
   /// No description provided for @settingsReminderDays.
   ///
   /// In zh, this message translates to:
-  /// **'提前 {days} 天提醒'**
+  /// **'{days, plural, =0{当天提醒} other{提前 {days} 天提醒}}'**
   String settingsReminderDays(int days);
+
+  /// No description provided for @settingsReminderTimeTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'提醒时间'**
+  String get settingsReminderTimeTitle;
+
+  /// No description provided for @settingsReminderHourLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'时'**
+  String get settingsReminderHourLabel;
+
+  /// No description provided for @settingsReminderMinuteLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'分'**
+  String get settingsReminderMinuteLabel;
+
+  /// No description provided for @settingsReminderSecondLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'秒'**
+  String get settingsReminderSecondLabel;
 
   /// No description provided for @settingsSaveButton.
   ///

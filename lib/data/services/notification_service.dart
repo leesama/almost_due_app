@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../models/app_settings.dart';
 import '../models/expiry_item.dart';
 
 class NotificationService {
@@ -54,6 +55,7 @@ class NotificationService {
         >();
     if (androidPlugin != null) {
       final granted = await androidPlugin.requestNotificationsPermission();
+      await androidPlugin.requestExactAlarmsPermission();
       return granted ?? false;
     }
 
@@ -76,27 +78,40 @@ class NotificationService {
 
   /// 为单个物品调度到期提醒通知
   /// [item] 要提醒的物品
-  /// [reminderDays] 提前多少天提醒
+  /// [settings] 提前多少天提醒以及提醒时间
   Future<void> scheduleExpiryNotification(
     ExpiryItem item,
-    int reminderDays,
+    AppSettings settings,
   ) async {
     final l10n = await _resolveLocalizations();
-    // 计算通知时间：到期日前 N 天的早上 9:00
-    final notifyDate = item.expiryDate.subtract(Duration(days: reminderDays));
+    // 计算通知时间：到期日前 N 天的指定时间
+    final notifyDate = item.expiryDate.subtract(
+      Duration(days: settings.reminderDays),
+    );
     final scheduledTime = tz.TZDateTime(
       tz.local,
       notifyDate.year,
       notifyDate.month,
       notifyDate.day,
-      9, // 早上 9 点
-      0,
+      settings.reminderHour,
+      settings.reminderMinute,
+      settings.reminderSecond,
     );
 
+    final now = tz.TZDateTime.now(tz.local);
+    debugPrint('[NotificationService] 物品: ${item.name}');
+    debugPrint('[NotificationService] 到期日: ${item.expiryDate}');
+    debugPrint('[NotificationService] 提前天数: ${settings.reminderDays}');
+    debugPrint('[NotificationService] 计划通知时间: $scheduledTime');
+    debugPrint('[NotificationService] 当前时间: $now');
+
     // 如果通知时间已过，不调度
-    if (scheduledTime.isBefore(tz.TZDateTime.now(tz.local))) {
+    if (scheduledTime.isBefore(now)) {
+      debugPrint('[NotificationService] ❌ 通知时间已过，跳过调度');
       return;
     }
+
+    debugPrint('[NotificationService] ✅ 将调度通知');
 
     final notificationId = _generateNotificationId(item.id);
 
@@ -122,10 +137,10 @@ class NotificationService {
     await _plugin.zonedSchedule(
       notificationId,
       l10n.notificationTitle,
-      l10n.notificationBody(item.name, reminderDays),
+      l10n.notificationBody(item.name, settings.reminderDays),
       scheduledTime,
       details,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 
@@ -141,14 +156,25 @@ class NotificationService {
   }
 
   /// 重新调度所有物品的通知
-  Future<void> rescheduleAll(List<ExpiryItem> items, int reminderDays) async {
+  Future<void> rescheduleAll(
+    List<ExpiryItem> items,
+    AppSettings settings,
+  ) async {
+    debugPrint('[NotificationService] ===== 开始重新调度所有通知 =====');
+    debugPrint('[NotificationService] 物品数量: ${items.length}');
+    debugPrint(
+      '[NotificationService] 设置 - 提前天数: ${settings.reminderDays}, 时间: ${settings.reminderHour}:${settings.reminderMinute}:${settings.reminderSecond}',
+    );
+
     // 先取消所有现有通知
     await cancelAll();
+    debugPrint('[NotificationService] 已取消所有现有通知');
 
     // 为每个物品重新调度
     for (final item in items) {
-      await scheduleExpiryNotification(item, reminderDays);
+      await scheduleExpiryNotification(item, settings);
     }
+    debugPrint('[NotificationService] ===== 重新调度完成 =====');
   }
 
   /// 发送测试通知（用于验证通知功能是否正常）
@@ -189,8 +215,7 @@ class NotificationService {
   Future<AppLocalizations> _resolveLocalizations() async {
     final locale = WidgetsBinding.instance.platformDispatcher.locale;
     final resolvedLocale = AppLocalizations.supportedLocales.firstWhere(
-      (supportedLocale) =>
-          supportedLocale.languageCode == locale.languageCode,
+      (supportedLocale) => supportedLocale.languageCode == locale.languageCode,
       orElse: () => AppLocalizations.supportedLocales.first,
     );
     return AppLocalizations.delegate.load(resolvedLocale);

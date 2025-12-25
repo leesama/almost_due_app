@@ -12,15 +12,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => '快到期啦';
 
   @override
-  String get appTagline => '可爱提醒你的物品到期';
-
-  @override
   String totalItems(Object count) {
     return '当前已登记 $count 件';
   }
 
   @override
   String get itemsListTitle => '物品列表';
+
+  @override
+  String get homeTabExpired => '已到期商品';
+
+  @override
+  String get homeTabDueSoon => '快到期商品';
+
+  @override
+  String get homeTabAll => '所有商品';
 
   @override
   String get addItemFab => '添加物品';
@@ -118,6 +124,22 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get reminderExpiredTitle => '已到期提醒';
+
+  @override
+  String reminderExpiredCount(int count) {
+    return '已到期 $count 件';
+  }
+
+  @override
+  String get reminderDueSoonTitle => '快到期提醒';
+
+  @override
+  String reminderDueSoonCount(int count) {
+    return '快到期 $count 件';
+  }
+
+  @override
   String get settingsTitle => '设置';
 
   @override
@@ -146,8 +168,26 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String settingsReminderDays(int days) {
-    return '提前 $days 天提醒';
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '提前 $days 天提醒',
+      zero: '当天提醒',
+    );
+    return '$_temp0';
   }
+
+  @override
+  String get settingsReminderTimeTitle => '提醒时间';
+
+  @override
+  String get settingsReminderHourLabel => '时';
+
+  @override
+  String get settingsReminderMinuteLabel => '分';
+
+  @override
+  String get settingsReminderSecondLabel => '秒';
 
   @override
   String get settingsSaveButton => '保存设置';

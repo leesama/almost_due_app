@@ -1,28 +1,37 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:almost_due_app/l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/router.dart';
 import '../../app/theme.dart';
+import '../../app/router.dart';
+import '../../data/models/expiry_item.dart';
 import '../../state/providers.dart';
+import '../../utils/date_utils.dart';
 import '../widgets/cute_background.dart';
 import '../widgets/home_header.dart';
 import '../widgets/items_list.dart';
 import '../widgets/quick_actions_row.dart';
-import '../widgets/reminder_card.dart';
 import 'add_item_types.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int _tabIndex = 2;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final appState = ref.watch(appStateProvider);
     final items = appState.sortedItems;
     final settings = appState.settings;
-    final counts = ReminderCounts.fromItems(items, settings.reminderDays);
+    final filteredItems = _filteredItems(items, settings.reminderDays, _tabIndex);
+    final listTitle = _tabTitle(l10n, _tabIndex);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -42,10 +51,6 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                  child: ReminderCard(counts: counts),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                   child: QuickActionsRow(
                     onManual: () => _openAddItem(context, AddMode.manual),
                     onAi: () => _openAddItem(context, AddMode.ai),
@@ -56,14 +61,14 @@ class HomeScreen extends ConsumerWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      l10n.itemsListTitle,
+                      listTitle,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                 ),
                 Expanded(
                   child: ItemsList(
-                    items: items,
+                    items: filteredItems,
                     reminderDays: settings.reminderDays,
                     onRemove: (item) =>
                         ref.read(appStateProvider.notifier).removeItem(item.id),
@@ -81,6 +86,24 @@ class HomeScreen extends ConsumerWidget {
         label: Text(l10n.addItemFab),
         onPressed: () => _openAddItem(context, AddMode.manual),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _tabIndex,
+        onTap: (index) => setState(() => _tabIndex = index),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.event_busy_rounded),
+            label: l10n.homeTabExpired,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.event_available_rounded),
+            label: l10n.homeTabDueSoon,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.list_alt_rounded),
+            label: l10n.homeTabAll,
+          ),
+        ],
+      ),
     );
   }
 
@@ -97,6 +120,36 @@ class HomeScreen extends ConsumerWidget {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.itemSavedSnack)));
+    }
+  }
+
+  List<ExpiryItem> _filteredItems(
+    List<ExpiryItem> items,
+    int reminderDays,
+    int tabIndex,
+  ) {
+    if (tabIndex == 2) {
+      return items;
+    }
+    final today = dateOnly(DateTime.now());
+    return items.where((item) {
+      final days = dateOnly(item.expiryDate).difference(today).inDays;
+      if (tabIndex == 0) {
+        return days < 0;
+      }
+      return days >= 0 && days <= reminderDays;
+    }).toList();
+  }
+
+  String _tabTitle(AppLocalizations l10n, int tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        return l10n.homeTabExpired;
+      case 1:
+        return l10n.homeTabDueSoon;
+      case 2:
+      default:
+        return l10n.homeTabAll;
     }
   }
 }

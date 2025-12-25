@@ -12,15 +12,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Almost Due';
 
   @override
-  String get appTagline => 'Cute reminders for your expiring items';
-
-  @override
   String totalItems(Object count) {
     return '$count items registered';
   }
 
   @override
   String get itemsListTitle => 'Items List';
+
+  @override
+  String get homeTabExpired => 'Expired Items';
+
+  @override
+  String get homeTabDueSoon => 'Due Soon Items';
+
+  @override
+  String get homeTabAll => 'All Items';
 
   @override
   String get addItemFab => 'Add Item';
@@ -119,6 +125,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get reminderExpiredTitle => 'Expired Reminders';
+
+  @override
+  String reminderExpiredCount(int count) {
+    return '$count expired';
+  }
+
+  @override
+  String get reminderDueSoonTitle => 'Due Soon Reminders';
+
+  @override
+  String reminderDueSoonCount(int count) {
+    return '$count due soon';
+  }
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override
@@ -147,8 +169,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsReminderDays(int days) {
-    return 'Remind $days days before';
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Remind $days days before',
+      zero: 'Remind on the day',
+    );
+    return '$_temp0';
   }
+
+  @override
+  String get settingsReminderTimeTitle => 'Reminder Time';
+
+  @override
+  String get settingsReminderHourLabel => 'Hour';
+
+  @override
+  String get settingsReminderMinuteLabel => 'Minute';
+
+  @override
+  String get settingsReminderSecondLabel => 'Second';
 
   @override
   String get settingsSaveButton => 'Save Settings';
