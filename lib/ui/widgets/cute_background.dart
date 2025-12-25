@@ -14,17 +14,17 @@ class CuteBackground extends StatelessWidget {
           Positioned(
             top: -60,
             right: -40,
-            child: _Bubble(color: AppColors.primary.withOpacity(0.18), size: 180),
+            child: _Bubble(color: AppColors.primary.withValues(alpha: 0.18), size: 180),
           ),
           Positioned(
             top: 120,
             left: -50,
-            child: _Bubble(color: AppColors.mint.withOpacity(0.18), size: 140),
+            child: _Bubble(color: AppColors.mint.withValues(alpha: 0.18), size: 140),
           ),
           Positioned(
             bottom: -70,
             right: -30,
-            child: _Bubble(color: AppColors.secondary.withOpacity(0.2), size: 200),
+            child: _Bubble(color: AppColors.secondary.withValues(alpha: 0.2), size: 200),
           ),
         ],
       ),

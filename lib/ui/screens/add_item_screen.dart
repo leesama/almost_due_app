@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -47,14 +48,15 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final appState = ref.watch(appStateProvider);
     final settings = appState.settings;
     final formattedDate = _selectedDate == null
-        ? '选择到期日期'
-        : DateFormat('yyyy/MM/dd').format(_selectedDate!);
+        ? l10n.selectExpiryDate
+        : DateFormat.yMMMd(l10n.localeName).format(_selectedDate!);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('录入物品')),
+      appBar: AppBar(title: Text(l10n.addItemTitle)),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -78,14 +80,14 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                   ),
                 const SizedBox(height: 16),
                 SectionCard(
-                  title: '手动录入',
+                  title: l10n.addItemManualSectionTitle,
                   child: Column(
                     children: [
                       TextField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: '物品名称',
-                          hintText: '例如：牛奶、面包、面膜',
+                        decoration: InputDecoration(
+                          labelText: l10n.addItemNameLabel,
+                          hintText: l10n.addItemNameHint,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -93,8 +95,8 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                         onTap: _pickDate,
                         borderRadius: BorderRadius.circular(16),
                         child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: '到期日期',
+                          decoration: InputDecoration(
+                            labelText: l10n.addItemExpiryLabel,
                           ),
                           child: Row(
                             children: [
@@ -106,7 +108,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                                       .bodyMedium
                                       ?.copyWith(
                                         color: _selectedDate == null
-                                            ? AppColors.ink.withOpacity(0.5)
+                                            ? AppColors.ink.withValues(alpha: 0.5)
                                             : AppColors.ink,
                                       ),
                                 ),
@@ -120,9 +122,9 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                       TextField(
                         controller: _notesController,
                         maxLines: 2,
-                        decoration: const InputDecoration(
-                          labelText: '备注（可选）',
-                          hintText: '例如：冷藏保存、开封后7天',
+                        decoration: InputDecoration(
+                          labelText: l10n.addItemNotesLabel,
+                          hintText: l10n.addItemNotesHint,
                         ),
                       ),
                     ],
@@ -134,7 +136,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                   child: ElevatedButton.icon(
                     onPressed: _saveItem,
                     icon: const Icon(Icons.check_rounded),
-                    label: const Text('保存物品'),
+                    label: Text(l10n.addItemSaveButton),
                   ),
                 ),
               ],
@@ -146,13 +148,14 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   }
 
   Future<void> _pickDate() async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final selected = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? now,
       firstDate: DateTime(now.year - 3),
       lastDate: DateTime(now.year + 10),
-      helpText: '选择到期日期',
+      helpText: l10n.selectExpiryDate,
     );
     if (!mounted) {
       return;
@@ -166,9 +169,10 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   }
 
   Future<void> _runAiAnalyze() async {
+    final l10n = AppLocalizations.of(context)!;
     final settings = ref.read(appStateProvider).settings;
     if (!settings.isAiConfigured) {
-      _showSnack('请先在设置中配置AI API');
+      _showSnack(l10n.aiNotConfiguredMessage);
       return;
     }
 
@@ -179,6 +183,12 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     final result = await _aiService.analyze(
       _aiTextController.text,
       settings,
+      messages: AiMessages(
+        notConfigured: l10n.aiNotConfiguredMessage,
+        emptyInput: l10n.aiResultEmptyInput,
+        noDateFound: l10n.aiResultNoDateFound,
+        dateDetected: l10n.aiResultDateDetected,
+      ),
     );
 
     if (!mounted) {
@@ -201,13 +211,14 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   }
 
   Future<void> _saveItem() async {
+    final l10n = AppLocalizations.of(context)!;
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      _showSnack('请输入物品名称');
+      _showSnack(l10n.addItemNameRequired);
       return;
     }
     if (_selectedDate == null) {
-      _showSnack('请选择到期日期');
+      _showSnack(l10n.addItemDateRequired);
       return;
     }
 

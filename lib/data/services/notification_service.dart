@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -79,6 +81,7 @@ class NotificationService {
     ExpiryItem item,
     int reminderDays,
   ) async {
+    final l10n = await _resolveLocalizations();
     // 计算通知时间：到期日前 N 天的早上 9:00
     final notifyDate = item.expiryDate.subtract(Duration(days: reminderDays));
     final scheduledTime = tz.TZDateTime(
@@ -97,10 +100,10 @@ class NotificationService {
 
     final notificationId = _generateNotificationId(item.id);
 
-    const androidDetails = AndroidNotificationDetails(
+    final androidDetails = AndroidNotificationDetails(
       'expiry_reminder',
-      '到期提醒',
-      channelDescription: '物品即将到期的提醒通知',
+      l10n.notificationChannelName,
+      channelDescription: l10n.notificationChannelDescription,
       importance: Importance.high,
       priority: Priority.high,
     );
@@ -111,15 +114,15 @@ class NotificationService {
       presentSound: true,
     );
 
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
       iOS: darwinDetails,
     );
 
     await _plugin.zonedSchedule(
       notificationId,
-      '物品即将到期',
-      '「${item.name}」将在 $reminderDays 天后到期，请及时处理！',
+      l10n.notificationTitle,
+      l10n.notificationBody(item.name, reminderDays),
       scheduledTime,
       details,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
@@ -148,8 +151,48 @@ class NotificationService {
     }
   }
 
+  /// 发送测试通知（用于验证通知功能是否正常）
+  Future<void> showTestNotification() async {
+    final l10n = await _resolveLocalizations();
+    final androidDetails = AndroidNotificationDetails(
+      'expiry_reminder',
+      l10n.notificationChannelName,
+      channelDescription: l10n.notificationChannelDescription,
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const darwinDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: darwinDetails,
+    );
+
+    await _plugin.show(
+      0, // 测试通知使用固定 ID
+      l10n.notificationTestTitle,
+      l10n.notificationTestBody,
+      details,
+    );
+  }
+
   /// 根据物品 ID 生成通知 ID（整数）
   int _generateNotificationId(String itemId) {
     return itemId.hashCode.abs() % 2147483647;
+  }
+
+  Future<AppLocalizations> _resolveLocalizations() async {
+    final locale = WidgetsBinding.instance.platformDispatcher.locale;
+    final resolvedLocale = AppLocalizations.supportedLocales.firstWhere(
+      (supportedLocale) =>
+          supportedLocale.languageCode == locale.languageCode,
+      orElse: () => AppLocalizations.supportedLocales.first,
+    );
+    return AppLocalizations.delegate.load(resolvedLocale);
   }
 }

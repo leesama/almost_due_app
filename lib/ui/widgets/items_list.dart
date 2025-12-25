@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 
 import '../../app/theme.dart';
 import '../../data/models/expiry_item.dart';
@@ -18,6 +19,7 @@ class ItemsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (items.isEmpty) {
       return const EmptyState();
     }
@@ -25,7 +27,7 @@ class ItemsList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
       itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final item = items[index];
         return Dismissible(
@@ -35,21 +37,18 @@ class ItemsList extends StatelessWidget {
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 24),
             decoration: BoxDecoration(
-              color: AppColors.danger.withOpacity(0.15),
+              color: AppColors.danger.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Icon(Icons.delete_rounded, color: AppColors.danger),
           ),
           onDismissed: (_) {
             onRemove(item);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('已删除物品记录')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.deleteItemSnack)));
           },
-          child: ExpiryItemCard(
-            item: item,
-            reminderDays: reminderDays,
-          ),
+          child: ExpiryItemCard(item: item, reminderDays: reminderDays),
         );
       },
     );
@@ -61,6 +60,7 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -70,7 +70,7 @@ class EmptyState extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -83,22 +83,22 @@ class EmptyState extends StatelessWidget {
               height: 56,
               width: 56,
               decoration: BoxDecoration(
-                color: AppColors.sunshine.withOpacity(0.35),
+                color: AppColors.sunshine.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: const Icon(Icons.inbox_rounded, size: 30),
             ),
             const SizedBox(height: 12),
             Text(
-              '还没有物品哦',
+              l10n.emptyTitle,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 6),
             Text(
-              '点击上方按钮开始记录到期日吧',
+              l10n.emptySubtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.ink.withOpacity(0.7),
-                  ),
+                color: AppColors.ink.withValues(alpha: 0.7),
+              ),
               textAlign: TextAlign.center,
             ),
           ],

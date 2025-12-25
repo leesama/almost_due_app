@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 
 import '../../app/theme.dart';
 import '../../data/models/expiry_item.dart';
@@ -40,6 +41,7 @@ class ReminderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -47,7 +49,7 @@ class ReminderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -59,7 +61,7 @@ class ReminderCard extends StatelessWidget {
             height: 52,
             width: 52,
             decoration: BoxDecoration(
-              color: AppColors.secondary.withOpacity(0.35),
+              color: AppColors.secondary.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(Icons.notifications_active_rounded),
@@ -70,14 +72,17 @@ class ReminderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '到期提醒',
+                  l10n.reminderTitle,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '已到期 ${counts.expired} 件 · 快到期 ${counts.dueSoon} 件',
+                  l10n.reminderSummary(
+                    counts.expired,
+                    counts.dueSoon,
+                  ),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.ink.withOpacity(0.7),
+                        color: AppColors.ink.withValues(alpha: 0.7),
                       ),
                 ),
               ],
@@ -86,11 +91,11 @@ class ReminderCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.sunshine.withOpacity(0.35),
+              color: AppColors.sunshine.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              '${counts.total} 件',
+              l10n.reminderTotal(counts.total),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),

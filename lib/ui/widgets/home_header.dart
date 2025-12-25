@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 
 import '../../app/theme.dart';
 
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends ConsumerWidget {
   const HomeHeader({
     super.key,
     required this.totalItems,
@@ -13,7 +15,8 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback onSettings;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
@@ -21,28 +24,41 @@ class HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '快到期啦',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 26,
-                    ),
+                l10n.appTitle,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontSize: 26),
               ),
               const SizedBox(height: 6),
               Text(
-                '可爱提醒你的物品到期',
+                l10n.appTagline,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.ink.withOpacity(0.6),
-                    ),
+                  color: AppColors.ink.withValues(alpha: 0.6),
+                ),
               ),
               const SizedBox(height: 6),
               Text(
-                '当前已登记 $totalItems 件',
+                l10n.totalItems(totalItems),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.ink.withOpacity(0.7),
-                    ),
+                  color: AppColors.ink.withValues(alpha: 0.7),
+                ),
               ),
             ],
           ),
         ),
+        // IconButton(
+        //   onPressed: () async {
+        //     await ref.read(notificationServiceProvider).showTestNotification();
+        //   },
+        //   icon: const Icon(Icons.notifications_active_rounded),
+        //   style: IconButton.styleFrom(
+        //     backgroundColor: Colors.white,
+        //     shape: RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.circular(16),
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(width: 8),
         IconButton(
           onPressed: onSettings,
           icon: const Icon(Icons.settings_rounded),

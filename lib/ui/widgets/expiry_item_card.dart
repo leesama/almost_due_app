@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 import '../../app/theme.dart';
@@ -17,8 +18,9 @@ class ExpiryItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final status = _itemStatus(item, reminderDays);
-    final dateText = DateFormat('yyyy/MM/dd').format(item.expiryDate);
+    final l10n = AppLocalizations.of(context)!;
+    final status = _itemStatus(item, reminderDays, l10n);
+    final dateText = DateFormat.yMMMd(l10n.localeName).format(item.expiryDate);
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 450),
@@ -39,7 +41,7 @@ class ExpiryItemCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -51,7 +53,7 @@ class ExpiryItemCard extends StatelessWidget {
               height: 50,
               width: 50,
               decoration: BoxDecoration(
-                color: status.color.withOpacity(0.18),
+                color: status.color.withValues(alpha: 0.18),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(status.icon, color: status.color),
@@ -67,9 +69,9 @@ class ExpiryItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '到期日 $dateText',
+                    l10n.expiryDateWithValue(dateText),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.ink.withOpacity(0.65),
+                          color: AppColors.ink.withValues(alpha: 0.65),
                         ),
                   ),
                   const SizedBox(height: 6),
@@ -83,9 +85,9 @@ class ExpiryItemCard extends StatelessWidget {
                   if (item.notes.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      '备注：${item.notes}',
+                      l10n.notesWithValue(item.notes),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.ink.withOpacity(0.6),
+                            color: AppColors.ink.withValues(alpha: 0.6),
                           ),
                     ),
                   ],
@@ -95,7 +97,7 @@ class ExpiryItemCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: status.color.withOpacity(0.2),
+                color: status.color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
@@ -112,35 +114,39 @@ class ExpiryItemCard extends StatelessWidget {
     );
   }
 
-  ItemStatus _itemStatus(ExpiryItem item, int reminderDays) {
+  ItemStatus _itemStatus(
+    ExpiryItem item,
+    int reminderDays,
+    AppLocalizations l10n,
+  ) {
     final days = daysUntil(item.expiryDate);
     if (days < 0) {
       return ItemStatus(
-        label: '已到期',
-        detail: '已过期 ${days.abs()} 天',
+        label: l10n.statusExpiredLabel,
+        detail: l10n.statusExpiredDetail(days.abs()),
         color: AppColors.danger,
         icon: Icons.warning_amber_rounded,
       );
     }
     if (days == 0) {
-      return const ItemStatus(
-        label: '今天',
-        detail: '今天到期',
+      return ItemStatus(
+        label: l10n.statusTodayLabel,
+        detail: l10n.statusTodayDetail,
         color: AppColors.warning,
         icon: Icons.access_time_rounded,
       );
     }
     if (days <= reminderDays) {
       return ItemStatus(
-        label: '快到期',
-        detail: '还有 $days 天',
+        label: l10n.statusDueSoonLabel,
+        detail: l10n.statusDueInDays(days),
         color: AppColors.warning,
         icon: Icons.notifications_active_rounded,
       );
     }
     return ItemStatus(
-      label: '安全',
-      detail: '还有 $days 天',
+      label: l10n.statusSafeLabel,
+      detail: l10n.statusDueInDays(days),
       color: AppColors.success,
       icon: Icons.check_circle_rounded,
     );

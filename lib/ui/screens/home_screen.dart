@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,6 +18,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final appState = ref.watch(appStateProvider);
     final items = appState.sortedItems;
     final settings = appState.settings;
@@ -54,7 +56,7 @@ class HomeScreen extends ConsumerWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      '物品列表',
+                      l10n.itemsListTitle,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
@@ -63,9 +65,8 @@ class HomeScreen extends ConsumerWidget {
                   child: ItemsList(
                     items: items,
                     reminderDays: settings.reminderDays,
-                    onRemove: (item) => ref
-                        .read(appStateProvider.notifier)
-                        .removeItem(item.id),
+                    onRemove: (item) =>
+                        ref.read(appStateProvider.notifier).removeItem(item.id),
                   ),
                 ),
               ],
@@ -77,13 +78,14 @@ class HomeScreen extends ConsumerWidget {
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.ink,
         icon: const Icon(Icons.add_rounded),
-        label: const Text('添加物品'),
+        label: Text(l10n.addItemFab),
         onPressed: () => _openAddItem(context, AddMode.manual),
       ),
     );
   }
 
   Future<void> _openAddItem(BuildContext context, AddMode mode) async {
+    final l10n = AppLocalizations.of(context)!;
     final saved = await context.push<bool>(
       AppRoutes.addItem,
       extra: AddItemArgs(mode: mode),
@@ -92,9 +94,9 @@ class HomeScreen extends ConsumerWidget {
       return;
     }
     if (saved == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('已保存物品')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.itemSavedSnack)));
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 
 import '../../app/theme.dart';
 
@@ -10,12 +11,13 @@ class QuickActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: QuickActionCard(
-            title: '手动录入',
-            subtitle: '快速填写到期日',
+            title: l10n.manualEntry,
+            subtitle: l10n.quickManualSubtitle,
             icon: Icons.edit_note_rounded,
             color: AppColors.mint,
             onTap: onManual,
@@ -24,8 +26,8 @@ class QuickActionsRow extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: QuickActionCard(
-            title: 'AI识别',
-            subtitle: '自动识别日期',
+            title: l10n.aiScan,
+            subtitle: l10n.quickAiSubtitle,
             icon: Icons.auto_awesome_rounded,
             color: AppColors.primary,
             onTap: onAi,
@@ -64,7 +66,7 @@ class QuickActionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -77,7 +79,7 @@ class QuickActionCard extends StatelessWidget {
               height: 44,
               width: 44,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.25),
+                color: color.withValues(alpha: 0.25),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(icon, color: color),
@@ -91,7 +93,7 @@ class QuickActionCard extends StatelessWidget {
             Text(
               subtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.ink.withOpacity(0.6),
+                    color: AppColors.ink.withValues(alpha: 0.6),
                   ),
             ),
           ],

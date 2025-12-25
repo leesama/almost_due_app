@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:almost_due_app/l10n/app_localizations.dart';
 
 import '../../app/theme.dart';
 import 'section_card.dart';
@@ -19,24 +20,27 @@ class AiPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SectionCard(
-      title: 'AI识别录入',
+      title: l10n.aiPanelTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            isConfigured ? '已连接AI服务，可以识别包装上的日期。' : '请先在设置中配置AI API。',
+            isConfigured
+                ? l10n.aiConfiguredMessage
+                : l10n.aiNotConfiguredMessage,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.ink.withOpacity(0.7),
+                  color: AppColors.ink.withValues(alpha: 0.7),
                 ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: controller,
             maxLines: 4,
-            decoration: const InputDecoration(
-              labelText: '包装文字或识别结果',
-              hintText: '例如：保质期至2025年04月30日',
+            decoration: InputDecoration(
+              labelText: l10n.aiTextFieldLabel,
+              hintText: l10n.aiTextFieldHint,
             ),
           ),
           const SizedBox(height: 12),
@@ -54,9 +58,9 @@ class AiPanel extends StatelessWidget {
                         width: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text(
-                        '开始识别',
-                        key: ValueKey('ready'),
+                    : Text(
+                        l10n.aiStartButton,
+                        key: const ValueKey('ready'),
                       ),
               ),
             ),

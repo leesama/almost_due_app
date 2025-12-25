@@ -8,21 +8,39 @@ class AiResult {
   final String? message;
 }
 
+class AiMessages {
+  const AiMessages({
+    required this.notConfigured,
+    required this.emptyInput,
+    required this.noDateFound,
+    required this.dateDetected,
+  });
+
+  final String notConfigured;
+  final String emptyInput;
+  final String noDateFound;
+  final String dateDetected;
+}
+
 class AiService {
-  Future<AiResult> analyze(String text, AppSettings settings) async {
+  Future<AiResult> analyze(
+    String text,
+    AppSettings settings, {
+    required AiMessages messages,
+  }) async {
     final trimmed = text.trim();
     if (!settings.isAiConfigured) {
-      return const AiResult(message: '请先在设置中配置AI API');
+      return AiResult(message: messages.notConfigured);
     }
     if (trimmed.isEmpty) {
-      return const AiResult(message: '请先输入包装上的文字或拍照识别内容');
+      return AiResult(message: messages.emptyInput);
     }
 
     await Future<void>.delayed(const Duration(milliseconds: 500));
 
     final dates = _extractDates(trimmed);
     if (dates.isEmpty) {
-      return const AiResult(message: '没有识别到日期，可以手动选择到期日');
+      return AiResult(message: messages.noDateFound);
     }
 
     dates.sort();
@@ -32,7 +50,7 @@ class AiService {
     return AiResult(
       expiryDate: pickedDate,
       nameGuess: nameGuess,
-      message: '已识别到可能的到期日',
+      message: messages.dateDetected,
     );
   }
 
