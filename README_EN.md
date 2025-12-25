@@ -4,7 +4,7 @@ A cute expiry date management app to help you track the shelf life of food and i
 
 [简体中文](./README.md) | English
 
-## ✨ Features
+## ✨ Feature
 
 - **🧸 Fresh & Cute UI** - Thoughtfully designed interface that makes managing expiry dates fun
 - **📝 Manual Entry** - Quickly add item name, expiry date, and notes
