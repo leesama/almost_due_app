@@ -41,19 +41,19 @@ class HomeHeader extends ConsumerWidget {
             ],
           ),
         ),
-        IconButton(
-          onPressed: () async {
-            await ref.read(notificationServiceProvider).showTestNotification();
-          },
-          icon: const Icon(Icons.notifications_active_rounded),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
+        // IconButton(
+        //   onPressed: () async {
+        //     await ref.read(notificationServiceProvider).showTestNotification();
+        //   },
+        //   icon: const Icon(Icons.notifications_active_rounded),
+        //   style: IconButton.styleFrom(
+        //     backgroundColor: Colors.white,
+        //     shape: RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.circular(16),
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(width: 8),
         IconButton(
           onPressed: onSettings,
           icon: const Icon(Icons.settings_rounded),
