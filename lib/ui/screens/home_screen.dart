@@ -86,23 +86,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         label: Text(l10n.addItemFab),
         onPressed: () => _openAddItem(context, AddMode.manual),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _tabIndex,
-        onTap: (index) => setState(() => _tabIndex = index),
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.event_busy_rounded),
-            label: l10n.homeTabExpired,
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.18),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BottomNavigationBar(
+                currentIndex: _tabIndex,
+                onTap: (index) => setState(() => _tabIndex = index),
+                backgroundColor: AppColors.surface,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                showUnselectedLabels: true,
+                selectedItemColor: AppColors.primary,
+                unselectedItemColor: AppColors.ink.withValues(alpha: 0.6),
+                selectedIconTheme: const IconThemeData(size: 30),
+                unselectedIconTheme: const IconThemeData(size: 26),
+                selectedFontSize: 14,
+                unselectedFontSize: 13,
+                selectedLabelStyle:
+                    Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                unselectedLabelStyle:
+                    Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.event_busy_rounded),
+                    activeIcon: const _CuteTabIcon(
+                      icon: Icons.event_busy_rounded,
+                    ),
+                    label: l10n.homeTabExpired,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.event_available_rounded),
+                    activeIcon: const _CuteTabIcon(
+                      icon: Icons.event_available_rounded,
+                    ),
+                    label: l10n.homeTabDueSoon,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.list_alt_rounded),
+                    activeIcon: const _CuteTabIcon(
+                      icon: Icons.list_alt_rounded,
+                    ),
+                    label: l10n.homeTabAll,
+                  ),
+                ],
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.event_available_rounded),
-            label: l10n.homeTabDueSoon,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.list_alt_rounded),
-            label: l10n.homeTabAll,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -142,5 +196,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       default:
         return l10n.homeTabAll;
     }
+  }
+}
+
+class _CuteTabIcon extends StatelessWidget {
+  const _CuteTabIcon({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Icon(icon),
+    );
   }
 }
