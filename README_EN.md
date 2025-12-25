@@ -1,6 +1,6 @@
 # Almost Due 📅
 
-A cute expiry date management app to help you track the shelf life of food and items, reducing waste.
+A cute expiry date management app to help you track the shelf life of food and items, reducing waste
 
 [简体中文](./README.md) | English
 
