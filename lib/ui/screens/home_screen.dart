@@ -30,11 +30,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final appState = ref.watch(appStateProvider);
     final items = appState.sortedItems;
     final settings = appState.settings;
-    final filteredItems = _filteredItems(items, settings.reminderDays, _tabIndex);
+    final filteredItems = _filteredItems(
+      items,
+      settings.reminderDays,
+      _tabIndex,
+    );
     final listTitle = _tabTitle(l10n, _tabIndex);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
+      extendBody: false,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -86,10 +91,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         label: Text(l10n.addItemFab),
         onPressed: () => _openAddItem(context, AddMode.manual),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      bottomNavigationBar: Container(
+        color: AppColors.surface,
+        child: SafeArea(
+          top: false,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: AppColors.surface,
@@ -107,52 +112,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
-              child: BottomNavigationBar(
-                currentIndex: _tabIndex,
-                onTap: (index) => setState(() => _tabIndex = index),
-                backgroundColor: AppColors.surface,
-                elevation: 0,
-                type: BottomNavigationBarType.fixed,
-                showUnselectedLabels: true,
-                selectedItemColor: AppColors.primary,
-                unselectedItemColor: AppColors.ink.withValues(alpha: 0.6),
-                selectedIconTheme: const IconThemeData(size: 30),
-                unselectedIconTheme: const IconThemeData(size: 26),
-                selectedFontSize: 14,
-                unselectedFontSize: 13,
-                selectedLabelStyle:
-                    Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                unselectedLabelStyle:
-                    Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                items: [
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.event_busy_rounded),
-                    activeIcon: const _CuteTabIcon(
-                      icon: Icons.event_busy_rounded,
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  splashFactory: NoSplash.splashFactory,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                ),
+                child: BottomNavigationBar(
+                  currentIndex: _tabIndex,
+                  onTap: (index) => setState(() => _tabIndex = index),
+                  backgroundColor: AppColors.surface,
+                  elevation: 0,
+                  type: BottomNavigationBarType.fixed,
+                  showUnselectedLabels: true,
+                  selectedItemColor: AppColors.primary,
+                  unselectedItemColor: AppColors.ink.withValues(alpha: 0.6),
+                  selectedIconTheme: const IconThemeData(size: 30),
+                  unselectedIconTheme: const IconThemeData(size: 26),
+                  selectedFontSize: 14,
+                  unselectedFontSize: 13,
+                  selectedLabelStyle: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+                  unselectedLabelStyle: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(fontSize: 13, fontWeight: FontWeight.w600),
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.event_busy_rounded),
+                      activeIcon: const _CuteTabIcon(
+                        icon: Icons.event_busy_rounded,
+                      ),
+                      label: l10n.homeTabExpired,
                     ),
-                    label: l10n.homeTabExpired,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.event_available_rounded),
-                    activeIcon: const _CuteTabIcon(
-                      icon: Icons.event_available_rounded,
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.event_available_rounded),
+                      activeIcon: const _CuteTabIcon(
+                        icon: Icons.event_available_rounded,
+                      ),
+                      label: l10n.homeTabDueSoon,
                     ),
-                    label: l10n.homeTabDueSoon,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.list_alt_rounded),
-                    activeIcon: const _CuteTabIcon(
-                      icon: Icons.list_alt_rounded,
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.list_alt_rounded),
+                      activeIcon: const _CuteTabIcon(
+                        icon: Icons.list_alt_rounded,
+                      ),
+                      label: l10n.homeTabAll,
                     ),
-                    label: l10n.homeTabAll,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -162,10 +168,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _openAddItem(BuildContext context, AddMode mode) async {
-    await context.push(
-      AppRoutes.addItem,
-      extra: AddItemArgs(mode: mode),
-    );
+    await context.push(AppRoutes.addItem, extra: AddItemArgs(mode: mode));
   }
 
   List<ExpiryItem> _filteredItems(
@@ -211,9 +214,7 @@ class _CuteTabIcon extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Icon(icon),
     );
